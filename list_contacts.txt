@@ -1,2 +1,9 @@
 You have new message from Sergei(898989898898): Hi its me
 You have new message from Frank(198-1272372): Good
+
+git init
+git add --all
+git commit -a -m 'first commit'
+git remote add origin https://github.com/SergeiKRI/django.git
+git pull --rebase origin main
+git push origin main
