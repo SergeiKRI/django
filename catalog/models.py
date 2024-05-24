@@ -49,17 +49,19 @@ class Products(models.Model):
         related_name='products'
     )
     price = models.IntegerField(
-        verbose_name="Цена за покупку", help_text="Укажите цену товара"
+        verbose_name="Цена за покупку", help_text="Укажите цену товара", **NULLABLE
     )
     date_created_at = models.DateTimeField(
         auto_created=True,
         verbose_name="Дата добавления",
         help_text="Дата добавления",
+        **NULLABLE
     )
     date_updated_at = models.DateTimeField(
         auto_now=True,
         verbose_name="Дата изменения",
         help_text="Дата изменения",
+        **NULLABLE
     )
 
     # is_active = models.BooleanField(default=True, verbose_name='Есть')
