@@ -7,28 +7,20 @@ class Command(BaseCommand):
 
     @staticmethod
     def json_read_categories():
-        category = [
-            {"name": "продукты", "description": ""},
-            {"name": "морепродукты", "description": "достают из воды"},
-            {"name": "напитки", "description": "пьют"},
-        ]
-        return category
+        """
+        функция открывающая json файл для скрипта
+        """
 
     @staticmethod
     def json_read_products():
-        products = [
-            {"name": "cola", "description": "", "category": 6, "price": 70},
-            {
-                "name": "семга",
-                "description": "",
-                "category": 5,
-                "price": 100,
-            },
-            {"name": "сода", "description": "", "category": 4, "price": 40},
-        ]
-        return products
+        """
+        функция открывающая json файл для скрипта
+        """
 
     def handle(self, *args, **options):
+        """
+        создание базы по шаблону
+        """
 
         product_for_create = []
         category_for_create = []
@@ -41,7 +33,6 @@ class Command(BaseCommand):
             product_for_create.append(Products(**product))
 
         Products.objects.bulk_create(product_for_create)
-
 
 # #
 # #
