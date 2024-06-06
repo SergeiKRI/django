@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 
 NULLABLE = {"blank": True, "null": True}
@@ -52,19 +54,17 @@ class Products(models.Model):
         verbose_name="Цена за покупку", help_text="Укажите цену товара", **NULLABLE
     )
     date_created_at = models.DateTimeField(
-        auto_created=True,
+        default=datetime.now,
         verbose_name="Дата добавления",
-        help_text="Дата добавления",
+        help_text="ДД.ММ.ГГГГ",
         **NULLABLE
     )
     date_updated_at = models.DateTimeField(
-        auto_now=True,
+        default=datetime.now,
         verbose_name="Дата изменения",
-        help_text="Дата изменения",
+        help_text="ДД.ММ.ГГГГ",
         **NULLABLE
     )
-
-    # is_active = models.BooleanField(default=True, verbose_name='Есть')
 
     def __str__(self):
         return self.name
@@ -80,3 +80,59 @@ class Products(models.Model):
             "date_updated_at",
         )
 
+
+class BlogRecord(models.Model):
+    title = models.CharField(
+        max_length=100,
+        verbose_name="Заголовок",
+        help_text="Введите заголовок",
+    )
+    slug = models.CharField(
+        max_length=100,
+        verbose_name="Ссылка",
+        help_text="Введите ссылку",
+        **NULLABLE
+    )
+    text = models.TextField(
+        verbose_name="Содержание",
+        help_text="Напишите текст",
+        **NULLABLE
+    )
+    image = models.ImageField(
+        upload_to="blog/",
+        verbose_name="Превью",
+        help_text="Загрузите картинку",
+        **NULLABLE
+    )
+    date_created_at = models.DateTimeField(
+        default=datetime.now,
+        verbose_name="Дата добавления",
+        help_text="ДД.ММ.ГГГГ",
+        **NULLABLE
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='Активна'
+    )
+    count_views = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Количество просмотров",
+        help_text="Укажите количество просмотров",
+        **NULLABLE
+    )
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = "запись"
+        verbose_name_plural = "записи"
+        ordering = (
+            "title",
+            "slug",
+            "text",
+            "image",
+            "date_created_at",
+            "is_active",
+            "count_views",
+        )
