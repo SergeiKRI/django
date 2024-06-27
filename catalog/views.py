@@ -1,9 +1,13 @@
+from datetime import datetime
+
+from django.forms import inlineformset_factory
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from pytils.translit import slugify
 
-from catalog.models import Products, BlogRecord
+from catalog.forms import ProductsForm, VersionForm
+from catalog.models import Products, BlogRecord, Version
 
 
 class ProductsListView(ListView):
@@ -16,14 +20,42 @@ class ProductsDetailView(DetailView):
 
 class ProductsCreateView(CreateView):
     model = Products
-    fields = ('name', 'description', 'price', 'category', 'image')
+    form_class = ProductsForm
     success_url = reverse_lazy('catalog:products_list')
 
 
 class ProductsUpdateView(UpdateView):
     model = Products
-    fields = ('name', 'description', 'price', 'category', 'image')
+    form_class = ProductsForm
     success_url = reverse_lazy('catalog:products_list')
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        ProductFormset = inlineformset_factory(Products, Version, form=VersionForm, extra=1)
+        if self.request.method == 'POST':
+            context_data['formset'] = ProductFormset(self.request.POST, instance=self.object)
+        else:
+            context_data['formset'] = ProductFormset(instance=self.object)
+
+        return context_data
+
+    def form_valid(self, form):
+        context_data = self.get_context_data()
+        formset = context_data['formset']
+
+        if form.is_valid() and formset.is_valid():
+            self.object = form.save()
+            formset.instance = self.object
+            formset.save()
+            return super().form_valid(form)
+        else:
+            return self.render_to_response(self.get_context_data(form=form, formset=formset))
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        self.object.date_updated_at = datetime.now()
+        self.object.save()
+        return self.object
 
 
 class ProductsDeleteView(DeleteView):
